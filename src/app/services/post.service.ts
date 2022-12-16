@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Post } from '../models/post';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
@@ -7,17 +9,17 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
-  fetchPosts(filter: string = '') {
+  fetchPosts(filter: string = ''): Observable<Post[]> {
     const filterParam = filter ? `?title=${filter}` : '';
 
-    return this.http.get(`${this.BASE_URL}${filterParam}`);
+    return this.http.get<Post[]>(`${this.BASE_URL}${filterParam}`);
   }
 
-  getPost(id: string) {
-    return this.http.get(`${this.BASE_URL}/${id}`);
+  getPost(id: number): Observable<Post> {
+    return this.http.get<Post>(`${this.BASE_URL}/${id}`);
   }
 
-  createPost(title: string, body: string) {
-    return this.http.post(this.BASE_URL, { title, body });
+  createPost(title: string, body: string): Observable<Post> {
+    return this.http.post<Post>(this.BASE_URL, { title, body });
   }
 }

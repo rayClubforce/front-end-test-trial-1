@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { PostService } from '../services/post.service';
+import { getPost } from '../store/posts.actions';
+import { PostsState } from '../store/posts.reducer';
+import { getSelectedPost } from '../store/posts.selectors';
 
 @Component({
   selector: 'app-post-detail',
@@ -12,13 +15,15 @@ export class PostDetailComponent {
   post$!: Observable<any>;
 
   constructor(
-    private postService: PostService,
+    private store: Store<PostsState>,
     private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.params.subscribe(
-      ({ id }) => (this.post$ = this.postService.getPost(id))
+    this.post$ = this.store.pipe(select(getSelectedPost));
+
+    this.activatedRoute.params.subscribe(({ postId }) =>
+      this.store.dispatch(getPost({ postId }))
     );
   }
 }
